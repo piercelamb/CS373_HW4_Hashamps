@@ -1,0 +1,29 @@
+Bill,Bill,Vicki,Rob,Christine,Jamie,Ed,Hank,Sara,Tina,Doug,Frank,Kris,Ursula,Ed,Ed,Kris
+Allison,Marty,Stuart,Helene,Stuart
+
+# day 1
+infect,Marty,Rob
+infect,Marty,Tina
+infect,Allison,Bill
+
+# day 2
+infect,Marty,Doug
+infect,Stuart,Christine
+
+# day 3
+infect,Stuart,Jamie
+infect,Stuart,Hank
+
+# day 4
+infect,Christine,Vicki
+infect,Christine,Sara
+infect,Sara,Ed
+
+# day 5
+infect,Stuart,Ursula
+infect,Christine,Kris
+
+# day 6
+infect,Sara,Frank
+
+# end of simulation
