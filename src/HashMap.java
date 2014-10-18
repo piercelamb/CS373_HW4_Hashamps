@@ -28,7 +28,7 @@ public class HashMap<K, V> implements Map<K, V> {
 	}
 	
 	public boolean containsKey(K key) {
-		int h = hash(key, elements);
+		int h = hash(key);
 		Node current = elements[h];
 		while (current != null) {
 			if (current.key.equals(key)) {
@@ -41,7 +41,7 @@ public class HashMap<K, V> implements Map<K, V> {
 	}
 
 	public V get(K key) {
-		int h = hash(key, elements);
+		int h = hash(key);
 		Node current = elements[h];
 		while (current != null){
 			if (current.key.equals(key)){
@@ -70,30 +70,32 @@ public class HashMap<K, V> implements Map<K, V> {
 	}
 	
 	public void put(K key, V value) {
-		int h = hash(key, elements);
+		int h = hash(key);
 		Node current = elements[h];
 		//index is null so add new Node
 		if (current == null){
-			current = new Node(key, value);
+			Node newNode = new Node(key, value);
+			elements[h] = newNode;
 			size++;
-		}
-		//check to see if existing nodes have the same key to replace
-		boolean replaced = false;
-		while (current != null){
-		if (current.key.equals(key)) {
-			current.key = key;
-			current.value = value;
-			replaced = true;
-		}
-		current = current.next;
-		}
+		}else {
+			//check to see if existing nodes have the same key to replace
+			boolean replaced = false;
+			while (current != null){
+				if (current.key.equals(key)) {
+					current.key = key;
+					current.value = value;
+					replaced = true;
+				}
+				current = current.next;
+			}
 		//add to front of existing linked list
 		//p sure this is wrong
-		if (replaced == false) {
-			Node newNode = new Node(key, value); 
-			 newNode.next = elements[h];
-			 elements[h] = newNode;
-			 size++;
+			if (replaced == false) {
+				Node newNode = new Node(key, value); 
+				newNode.next = elements[h];
+				elements[h] = newNode;
+				size++;
+			}
 		}
 		
 		// resize if necessary
@@ -103,8 +105,26 @@ public class HashMap<K, V> implements Map<K, V> {
 	}
 	
 	public void remove(K key) {
-		// TODO: implement this method
-		
+		int h = hash(key);
+		if(elements[h] != null){
+			//case where it has one node
+			if(elements[h].key.equals(key)){
+				elements[h] = elements[h].next;
+				size--;
+			}else{
+				//case where its somewhere in the list
+				Node current = elements[h];
+				//iterate through elements until you find the one where key == key and you're not at the end
+				while (current.next != null && !current.next.key.equals(key)){
+					current = current.next;
+				}
+				//if you havent found the end, you've found where key = key, so remove
+				if(current.next != null){
+					current.next = current.next.next;
+					size--;
+				}
+			}
+		}
 	}
 
 	public int size() {
@@ -113,37 +133,49 @@ public class HashMap<K, V> implements Map<K, V> {
 	
 	
 	public String toString() {
+		if (isEmpty()){
+			return "{}";
+		}else{
+		String toplol = "{";
 		for (int i = 0; i < elements.length; i++){
 			Node current = elements[i];
-			System.out.print("{");
+			String lol = "";
 			while (current != null){
-				System.out.print(current.key+"="+current.value+" ");
+				lol = lol + current.key+"="+current.value+" ";
 				current = current.next;
 			}
+			if (elements[i] == null){
+				
+			}else {
+			toplol = toplol + "["+lol.substring(0, lol.length()-1)+"], ";
+			}
 		}
-		return "TODO";
+		
+		toplol = toplol.substring(0,toplol.length()-2)+"}";
+		return toplol;
+		}
 	}
 	
 	private void rehash() {
 		Node[] newElements = (Node[]) new HashMap.Node[2 * this.elements.length];
 		Node[] old = this.elements;
 		size = 0;
+		this.elements = newElements;
 		for (Node node : old) {
 			while (node != null) {
-				int h = hash(node.key, newElements);
 				put(node.key, node.value);
 				node = node.next;
 			}
-			size++;
+			
 		}
-		this.elements = newElements;
+		
 	}
 	
 	private double loadFactor() {
 		return (double) size / elements.length;
 	}
 	
-	private int hash(K key, Node[] elements) {
+	private int hash(K key) {
 		return Math.abs(key.hashCode()) % elements.length;
 	}
 	
