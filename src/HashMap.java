@@ -74,9 +74,8 @@ public class HashMap<K, V> implements Map<K, V> {
 		Node current = elements[h];
 		//index is null so add new Node
 		if (current == null){
-			current.key = key;
-			current.value = value;
-			current.next = null;
+			current = new Node(key, value);
+			size++;
 		}
 		//check to see if existing nodes have the same key to replace
 		boolean replaced = false;
@@ -92,7 +91,9 @@ public class HashMap<K, V> implements Map<K, V> {
 		//p sure this is wrong
 		if (replaced == false) {
 			Node newNode = new Node(key, value); 
-			newNode = elements[h];
+			 newNode.next = elements[h];
+			 elements[h] = newNode;
+			 size++;
 		}
 		
 		// resize if necessary
@@ -112,7 +113,14 @@ public class HashMap<K, V> implements Map<K, V> {
 	
 	
 	public String toString() {
-		// TODO: implement this method
+		for (int i = 0; i < elements.length; i++){
+			Node current = elements[i];
+			System.out.print("{");
+			while (current != null){
+				System.out.print(current.key+"="+current.value+" ");
+				current = current.next;
+			}
+		}
 		return "TODO";
 	}
 	
@@ -123,8 +131,7 @@ public class HashMap<K, V> implements Map<K, V> {
 		for (Node node : old) {
 			while (node != null) {
 				int h = hash(node.key, newElements);
-				newElements[h] = node;
-				//might be wrong, might require your put() method to add nodes appropriately
+				put(node.key, node.value);
 				node = node.next;
 			}
 			size++;
